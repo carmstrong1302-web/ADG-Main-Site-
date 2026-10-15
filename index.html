@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ADG — Armstrong Development Group</title>
+<meta name="description" content="Armstrong Development Group (ADG) is a development and design firm building affordable housing and architecture in New York and the Carolinas.">
+<link rel="icon" type="image/png" sizes="32x32" href="images/logo/favicon-32.png">
+<link rel="apple-touch-icon" href="images/logo/apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:title" content="ADG — Armstrong Development Group">
+<meta property="og:description" content="Build what matters, design for all. Development and design in New York and the Carolinas.">
+<meta property="og:url" content="https://withadg.com/">
+<meta property="og:image" content="https://withadg.com/images/social/share.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F2F0EC;
+    --ink:#33342F;
+    --ink-soft:#6B6C66;
+    --sky:#7FA9C4;
+    --charcoal:#33342F;
+    --terracotta:#BF6647;
+    --blueprint:#7FA9C4;
+    --rule:#33342F;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth; height:100%; overflow:hidden;}
+
+  body{
+    margin:0;
+    padding:14px;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Lato', sans-serif;
+    height:100%;
+    overflow:hidden;
+  }
+
+  body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    background-image:
+      radial-gradient(circle at 20% 30%, rgba(0,0,0,0.015) 0, transparent 45%),
+      radial-gradient(circle at 80% 70%, rgba(0,0,0,0.02) 0, transparent 50%);
+    z-index:0;
+  }
+
+  .frame{
+    border:1px solid var(--rule);
+    margin:0;
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    position:relative;
+    z-index:1;
+    overflow:hidden;
+  }
+
+  .bg-skyline{
+    position:fixed;
+    inset:0;
+    background-image:url('images/background/skyline.png');
+    background-repeat:no-repeat;
+    background-position:center center;
+    background-size:contain;
+    opacity:0.08;
+    transition:opacity 1.4s ease;
+    pointer-events:none;
+    z-index:0;
+  }
+  .bg-skyline.intro{ opacity:1; }
+
+  /* ---------- Header: logo in line with wordmark + tagline ---------- */
+  .header-row{
+    display:flex;
+    align-items:stretch;
+    position:relative;
+    z-index:1;
+  }
+
+  .logo{
+    width:120px;
+    flex-shrink:0;
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+    padding-top:1.1rem;
+    text-decoration:none;
+    color:var(--ink);
+    font-family:'Lato', sans-serif;
+    font-size:0.72rem;
+    letter-spacing:0.06em;
+    transition:background .25s ease, color .25s ease;
+  }
+  .logo:hover, .logo:focus-visible{
+    background:var(--blueprint);
+    color:var(--paper);
+  }
+  .logo img{
+    display:none;
+    max-width:112px;
+    max-height:112px;
+    width:auto;
+    height:auto;
+    object-fit:contain;
+  }
+  /* once a real logo loads, drop the placeholder chrome */
+  .logo.has-img{ padding-top:0.9rem; }
+  .logo.has-img:hover, .logo.has-img:focus-visible{ background:none; opacity:.62; }
+  .logo span{
+    border:1px solid currentColor;
+    padding:7px 11px;
+  }
+
+  .hero{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    padding:0.9rem 3vw;
+  }
+
+  .eyebrow{
+    font-family:'Lato', sans-serif;
+    font-size:0.72rem;
+    color:var(--ink-soft);
+    margin:0.4rem 0 0 0;
+  }
+
+  .wordmark{
+    margin:0;
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    font-size:clamp(1.8rem, 4vw, 3.1rem);
+    line-height:0.95;
+    letter-spacing:-0.01em;
+    cursor:default;
+  }
+
+  .rest{
+    display:inline-block;
+    max-width:0;
+    opacity:0;
+    overflow:hidden;
+    vertical-align:bottom;
+    white-space:pre;
+    font-size:0.62em;
+    letter-spacing:0;
+    transition:max-width .6s cubic-bezier(.4,0,.2,1), opacity .35s ease .05s;
+  }
+  .wordmark.intro .rest,
+  .wordmark:hover .rest,
+  .wordmark:focus-within .rest{
+    max-width:14em;
+    opacity:1;
+  }
+
+  .tagline{
+    margin:0 0 0.3rem 0;
+    max-width:34ch;
+    font-size:0.92rem;
+    color:var(--ink-soft);
+    line-height:1.5;
+  }
+
+  /* ---------- Body: tabs / toggle boxes / window, on one grid ---------- */
+  .body-row{
+    flex:1;
+    display:grid;
+    grid-template-columns:120px 0px 0px;
+    grid-template-rows:repeat(3, 1fr);
+    min-height:0;
+    transition:grid-template-columns .3s ease, grid-template-rows .3s ease;
+    position:relative;
+    z-index:1;
+  }
+  .body-row.expanded{
+    grid-template-columns:120px 270px 1fr;
+  }
+  .body-row.open-about{ grid-template-rows:2fr 0.7fr 0.7fr; }
+  .body-row.open-projects{ grid-template-rows:0.7fr 2fr 0.7fr; }
+  .body-row.open-contact{ grid-template-rows:0.7fr 0.7fr 2fr; }
+
+  .tabs{ display:contents; }
+
+  .tab{
+    grid-column:1;
+    min-height:0;
+    border:1px solid var(--rule);
+    margin:8px;
+    background:var(--paper);
+    color:var(--ink);
+    font:inherit;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    padding:0;
+    transition:background .25s ease, color .25s ease;
+  }
+  .tab:nth-of-type(1){ grid-row:1; }
+  .tab:nth-of-type(2){ grid-row:2; }
+  .tab:nth-of-type(3){ grid-row:3; }
+
+  .tab-label{
+    writing-mode:vertical-rl;
+    transform:rotate(180deg);
+    font-size:1.4rem;
+    letter-spacing:0.02em;
+    font-weight:500;
+    white-space:nowrap;
+  }
+
+  .tab:hover, .tab:focus-visible{
+    background:var(--blueprint);
+    color:var(--paper);
+  }
+  .tab.active{
+    background:var(--ink);
+    color:var(--paper);
+  }
+  .tab:focus-visible, .logo:focus-visible{
+    outline:2px solid var(--blueprint);
+    outline-offset:-4px;
+  }
+
+  /* toggle-col: 3 boxes, top-aligned to top of its tab, bottom to bottom, middle centered */
+  .toggle-col{
+    display:none;
+    grid-column:2;
+    min-height:0;
+    flex-direction:column;
+    justify-content:space-evenly;
+    align-items:stretch;
+    padding:8px 14px;
+  }
+  .toggle-col.show{ display:flex; }
+  .toggle-col[data-for="about"]{ grid-row:1; }
+  .toggle-col[data-for="projects"]{ grid-row:2; }
+  .toggle-col[data-for="contact"]{ grid-row:3; }
+
+  .toggle-item{
+    display:flex;
+    align-items:center;
+    gap:0.7rem;
+  }
+
+  .toggle{
+    width:clamp(34px, 5.2vh, 54px);
+    height:clamp(34px, 5.2vh, 54px);
+    border:1px solid var(--rule);
+    background:var(--paper);
+    cursor:pointer;
+    padding:0;
+    flex-shrink:0;
+    transition:background .2s ease, border-color .2s ease;
+  }
+  .toggle:hover, .toggle:focus-visible{
+    border-color:var(--blueprint);
+  }
+  .toggle.active{
+    background:var(--ink);
+    border-color:var(--ink);
+  }
+
+  /* brand accent: thin gray line ending in sky / charcoal / terracotta squares */
+  .brand-accent{
+    display:flex;
+    align-items:center;
+    gap:5px;
+    margin-top:0.8rem;
+  }
+  .accent-line{
+    height:1px;
+    width:88px;
+    background:#B5B4AE;
+  }
+  .accent-square{ width:8px; height:8px; }
+  .sq-sky{ background:var(--sky); }
+  .sq-charcoal{ background:var(--charcoal); }
+  .sq-terracotta{ background:var(--terracotta); }
+
+  /* sub-brand color coding: Dream = sky, Develop = charcoal, Design = terracotta */
+  .toggle.brand-sky:hover, .toggle.brand-sky:focus-visible{ border-color:var(--sky); }
+  .toggle.brand-sky.active{ background:var(--sky); border-color:var(--sky); }
+  .toggle.brand-terracotta:hover, .toggle.brand-terracotta:focus-visible{ border-color:var(--terracotta); }
+  .toggle.brand-terracotta.active{ background:var(--terracotta); border-color:var(--terracotta); }
+  .toggle.brand-charcoal:hover, .toggle.brand-charcoal:focus-visible{ border-color:var(--charcoal); }
+  .toggle.brand-charcoal.active{ background:var(--charcoal); border-color:var(--charcoal); }
+
+  .toggle-label{
+    font-size:0.95rem;
+    line-height:1.3;
+    max-width:150px;
+    opacity:1;
+    transition:opacity .25s ease;
+  }
+  .toggle-item.active .toggle-label{
+    opacity:0;
+    pointer-events:none;
+  }
+
+  /* window: one pane per section, scoped to that section's row so it lines up with its toggle boxes */
+  .window{
+    display:none;
+    grid-column:3;
+    overflow-y:auto;
+    min-height:0;
+    padding:8px 28px;
+  }
+  .window.show{ display:flex; align-items:stretch; }
+  .window[data-window="about"]{ grid-row:1; }
+  .window[data-window="projects"]{ grid-row:2; }
+  .window[data-window="contact"]{ grid-row:3; }
+
+  .view{ display:none; width:100%; }
+  .view.active{ display:block; animation:fadeIn .4s ease; }
+  @keyframes fadeIn{ from{ opacity:0; transform:translateY(6px);} to{ opacity:1; transform:translateY(0); } }
+
+  .circle-figure{
+    width:clamp(105px, 15.5vh, 200px);
+    height:clamp(105px, 15.5vh, 200px);
+    flex-shrink:0;
+    border-radius:50%;
+    border:1px solid var(--rule);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    font-family:'Lato', sans-serif;
+    font-size:0.78rem;
+    color:var(--ink-soft);
+    padding:1rem;
+    position:relative;
+    overflow:hidden;
+  }
+  .circle-figure.has-img{ border:none; padding:0; }
+  .circle-figure img{
+    display:none;
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+  }
+
+  :root{ --about-gap:2rem; }
+
+  /* Who view */
+  .who-view.active{ display:flex; align-self:flex-start; align-items:flex-start; gap:var(--about-gap); flex-wrap:nowrap; padding:0.5rem 0 1rem; }
+  .who-view .circle-figure{ position:sticky; top:0.5rem; }
+  .who-text{ flex:1; min-width:0; max-width:84ch; }
+  .who-text p{ margin:0 0 0.7rem 0; line-height:1.5; font-size:clamp(0.84rem, 1.8vh, 1rem); }
+  .who-text p:last-child{ margin-bottom:0; }
+
+  /* What view */
+  .what-view.active{ display:flex; flex-direction:column; justify-content:flex-start; align-self:flex-start; gap:1.1rem; padding:0.5rem 0 1rem; }
+  .pillar{ display:flex; align-items:flex-start; gap:var(--about-gap); text-align:left; min-height:0; }
+  .pillar .circle-figure{ margin:0; }
+  .pillar-text{ min-width:0; }
+  .pillar h3{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    font-size:clamp(1.15rem, 2.4vh, 1.55rem);
+    margin:0 0 0.2rem 0;
+  }
+  .pillar p{ color:var(--ink-soft); font-size:clamp(0.84rem, 1.8vh, 1rem); line-height:1.5; margin:0; max-width:84ch; }
+
+  /* When/Where/Why view */
+  .www-row{ display:flex; align-items:flex-start; gap:var(--about-gap); flex-wrap:nowrap; margin:0; }
+  .www-text{ flex:1; min-width:0; max-width:84ch; }
+  .www-text h3{ font-family:'Fraunces', serif; font-weight:500; font-size:clamp(1.15rem, 2.4vh, 1.55rem); margin:0 0 0.5rem 0; }
+  .www-text p{ line-height:1.5; margin:0 0 0.7rem 0; font-size:clamp(0.84rem, 1.8vh, 1rem); }
+  .www-text section + section{ margin-top:1.2rem; }
+  .www-text section p:last-child{ margin-bottom:0; }
+  .www-view.active{ align-self:flex-start; padding:0.5rem 0 1rem; }
+  
+  /* simple placeholder view (Design With / Dream With) */
+  .simple-view h3{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    font-size:1.6rem;
+    margin:0 0 0.6rem 0;
+  }
+  .simple-view p{
+    color:var(--ink-soft);
+    font-style:italic;
+    margin:0;
+  }
+
+  /* Develop With — real contact content */
+  .contact-view h3{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    font-size:1.6rem;
+    margin:0 0 0.7rem 0;
+  }
+  .contact-view p{
+    color:var(--ink-soft);
+    font-size:1.02rem;
+    margin:0 0 1rem 0;
+  }
+  .contact-email{
+    font-size:1.08rem;
+    color:var(--ink);
+    text-decoration:underline;
+    text-underline-offset:3px;
+    transition:color .2s ease;
+  }
+  .contact-email:hover, .contact-email:focus-visible{
+    color:var(--blueprint);
+  }
+
+  /* Project name list (Projects window) — same space-evenly rhythm as the toggle boxes beside it */
+  .project-list.active{
+    display:flex;
+    flex-direction:column;
+    justify-content:space-evenly;
+    align-self:stretch;
+  }
+  .project-row{
+    border:1px solid var(--rule);
+    padding:11px 18px;
+    width:100%;
+    max-width:420px;
+    font-size:1.15rem;
+    color:var(--ink-soft);
+    background:var(--paper);
+  }
+  button.project-row{
+    font:inherit;
+    text-align:left;
+    cursor:pointer;
+    transition:border-color .2s ease, color .2s ease;
+  }
+  button.project-row:hover, button.project-row:focus-visible{
+    border-color:var(--blueprint);
+    color:var(--ink);
+    outline:none;
+  }
+  .project-row.placeholder{
+    font-style:italic;
+    cursor:default;
+  }
+
+  /* ---------- Project modal: carousel + floating info card ---------- */
+  .modal-backdrop{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(27,27,23,0.74);
+    z-index:50;
+    align-items:center;
+    justify-content:center;
+    padding:5vw 4vw;
+  }
+  .modal-backdrop.open{ display:flex; }
+
+  .modal-box{
+    position:relative;
+    width:100%;
+    max-width:1100px;
+  }
+
+  .modal-close{
+    position:absolute;
+    top:-46px;
+    right:0;
+    width:36px;
+    height:36px;
+    border:1px solid var(--paper);
+    background:transparent;
+    color:var(--paper);
+    font-size:1.3rem;
+    line-height:1;
+    cursor:pointer;
+    transition:background .2s ease, color .2s ease;
+  }
+  .modal-close:hover, .modal-close:focus-visible{
+    background:var(--paper);
+    color:var(--ink);
+  }
+
+  .modal-stage{
+    position:relative;
+    width:100%;
+    aspect-ratio:16/10;
+    background:var(--paper);
+    border:1px solid var(--rule);
+    overflow:hidden;
+    background-image:
+      repeating-linear-gradient(45deg, rgba(27,27,23,0.18) 0 1px, transparent 1px 14px),
+      repeating-linear-gradient(-45deg, rgba(27,27,23,0.18) 0 1px, transparent 1px 14px);
+  }
+
+  .slide-placeholder{
+    position:absolute;
+    inset:0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:0.5rem;
+  }
+  .modal-stage.has-img{ background-image:none; }
+  .slide-img{
+    display:none;
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+  }
+  .slide-label{
+    font-family:'Fraunces', serif;
+    font-size:clamp(2rem, 6vw, 4rem);
+    color:var(--ink);
+  }
+  .slide-count{
+    font-family:'Lato', sans-serif;
+    font-size:0.85rem;
+    color:var(--ink-soft);
+  }
+
+  .carousel-arrow{
+    position:absolute;
+    top:50%;
+    transform:translateY(-50%);
+    width:44px;
+    height:44px;
+    border-radius:50%;
+    border:1px solid var(--rule);
+    background:var(--paper);
+    color:var(--ink);
+    font-size:1.3rem;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:2;
+    transition:background .2s ease, color .2s ease;
+  }
+  .carousel-arrow:hover, .carousel-arrow:focus-visible{
+    background:var(--blueprint);
+    color:var(--paper);
+    border-color:var(--blueprint);
+  }
+  .carousel-prev{ left:14px; }
+  .carousel-next{ right:16px; }
+
+  /* at rest: outline + faded title only. on hover: full card with the description */
+  .floating-info{
+    position:absolute;
+    top:22px;
+    right:78px;
+    width:186px;
+    max-height:calc(100% - 44px);
+    overflow-y:auto;
+    background:var(--paper);
+    border:1px solid var(--rule);
+    padding:0.85rem 0.95rem;
+    opacity:0.5;
+    transition:opacity .25s ease, padding .3s ease;
+    cursor:default;
+    z-index:3;
+  }
+  .floating-info:hover,
+  .floating-info:focus-within,
+  .floating-info.revealed{
+    opacity:1;
+    padding:1.1rem 0.95rem;
+  }
+  .floating-info h3{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    font-size:1.1rem;
+    line-height:1.25;
+    margin:0;
+  }
+  .floating-info .project-meta{
+    margin-top:0.4rem;
+    font-size:0.72rem;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    white-space:pre-line;
+    color:var(--ink-soft);
+    line-height:1.5;
+  }
+  .floating-info .project-meta:empty{ display:none; }
+  .floating-info p{
+    font-size:0.86rem;
+    color:var(--ink-soft);
+    line-height:1.5;
+    margin:0;
+    max-height:0;
+    opacity:0;
+    overflow:hidden;
+    white-space:pre-line;
+    transition:max-height .35s ease, opacity .25s ease, margin-top .35s ease;
+  }
+  .floating-info:hover p,
+  .floating-info:focus-within p,
+  .floating-info.revealed p{
+    max-height:70vh;
+    opacity:1;
+    margin-top:0.55rem;
+  }
+
+  @media (max-width:620px){
+    .floating-info{ width:auto; left:14px; right:14px; top:14px; bottom:auto; max-height:52%; padding:0.9rem 1.1rem; }
+    .carousel-next{ right:14px; }
+    .modal-close{ top:-40px; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .view, .rest, .body-row{ transition:none; animation:none; }
+  }
+
+  @media (max-width:620px){
+    html{ height:auto; overflow:visible; }
+    body{ height:auto; overflow:auto; }
+    .frame{ height:auto; min-height:calc(100vh - 28px); overflow:visible; }
+    .www-row{ align-items:flex-start; }
+    .header-row{ flex-direction:column; }
+    .logo{ width:100%; height:56px; justify-content:flex-start; padding-top:0; padding-left:1rem; align-items:center; border-bottom:1px solid var(--rule); }
+    .logo img{ max-width:68px; max-height:52px; }
+    .body-row{ display:flex; flex-direction:column; }
+    .tab{ min-height:52px; height:auto; margin:6px 8px; justify-content:flex-start; padding-left:1rem; }
+    .tab-label{ writing-mode:horizontal-tb; transform:none; font-size:1.05rem; }
+    .toggle-col{ flex-direction:column; align-items:flex-start; padding:12px 16px; gap:0.8rem; }
+    .window{ grid-row:auto; }
+
+    /* accordion: each section's boxes + content sit directly under its own bar */
+    .tab:nth-of-type(1){ order:1; }
+    .toggle-col[data-for="about"]{ order:2; }
+    .window[data-window="about"]{ order:3; }
+    .tab:nth-of-type(2){ order:4; }
+    .toggle-col[data-for="projects"]{ order:5; }
+    .window[data-window="projects"]{ order:6; }
+    .tab:nth-of-type(3){ order:7; }
+    .toggle-col[data-for="contact"]{ order:8; }
+    .window[data-window="contact"]{ order:9; }
+
+    .toggle-col{ padding:4px 22px 10px; }
+    .window{ padding:0 22px 16px; }
+    .window.show{ align-items:flex-start; }
+    .project-list.active{ gap:8px; align-self:auto; }
+    .what-view.active, .who-view.active, .www-view.active{ align-self:auto; }
+
+    .who-view.active{ flex-direction:column; }
+    .who-view .circle-figure{ position:relative; top:auto; }
+    .what-view.active{ flex-direction:column; }
+    .pillar{ gap:1rem; }
+    .pillar{ text-align:left; }
+    .pillar .circle-figure{ margin:0 0 1rem 0; }
+    .www-row{ flex-direction:column; }
+  }
+</style>
+
+</head>
+<body>
+
+<div class="frame">
+  <div class="bg-skyline intro" aria-hidden="true"></div>
+
+  <header class="header-row">
+    <a href="#" class="logo" id="logoBtn" aria-label="ADG home"><img src="images/logo/logo.svg" alt="ADG" data-try="0" onload="this.style.display='block'; this.nextElementSibling.style.display='none'; this.parentElement.classList.add('has-img');" onerror="var e=['logo.svg','logo.png','logo.jpg','logo.jpeg','logo.webp'],i=++this.dataset.try; if(i&lt;e.length){this.src='images/logo/'+e[i];}"><span>Logo</span></a>
+    <div class="hero">
+      <p class="tagline">Build what matters, design for all — with</p>
+      <h1 class="wordmark intro" tabindex="0">
+        <span class="letter">A<span class="rest">rmstrong </span></span><span class="letter">D<span class="rest">evelopment </span></span><span class="letter">G<span class="rest">roup</span></span>
+      </h1>
+      <p class="eyebrow">Development &amp; design</p>
+      <div class="brand-accent" aria-hidden="true">
+        <span class="accent-line"></span>
+        <span class="accent-square sq-sky"></span>
+        <span class="accent-square sq-charcoal"></span>
+        <span class="accent-square sq-terracotta"></span>
+      </div>
+    </div>
+  </header>
+
+  <div class="body-row" id="bodyRow">
+
+    <nav class="tabs">
+      <button class="tab" data-target="about" aria-expanded="false"><span class="tab-label">About</span></button>
+      <button class="tab" data-target="projects" aria-expanded="false"><span class="tab-label">Projects</span></button>
+      <button class="tab" data-target="contact" aria-expanded="false"><span class="tab-label">Contact</span></button>
+    </nav>
+
+    <div class="toggle-col" data-for="about">
+      <div class="toggle-item"><button class="toggle" data-window="about" data-view="who" aria-label="Who"></button><span class="toggle-label">Who</span></div>
+      <div class="toggle-item"><button class="toggle" data-window="about" data-view="what" aria-label="What"></button><span class="toggle-label">What</span></div>
+      <div class="toggle-item"><button class="toggle" data-window="about" data-view="www" aria-label="Where and Why"></button><span class="toggle-label">Where and Why</span></div>
+    </div>
+    <div class="toggle-col" data-for="projects">
+      <div class="toggle-item"><button class="toggle brand-charcoal" data-window="projects" data-view="development" aria-label="Development"></button><span class="toggle-label">Development</span></div>
+      <div class="toggle-item"><button class="toggle brand-terracotta" data-window="projects" data-view="design" aria-label="Design"></button><span class="toggle-label">Design</span></div>
+      <div class="toggle-item"><button class="toggle brand-sky" data-window="projects" data-view="dreams" aria-label="Dreams"></button><span class="toggle-label">Dreams</span></div>
+    </div>
+    <div class="toggle-col" data-for="contact">
+      <div class="toggle-item"><button class="toggle brand-charcoal" data-window="contact" data-view="partner" aria-label="Develop With"></button><span class="toggle-label">Develop With</span></div>
+      <div class="toggle-item"><button class="toggle brand-terracotta" data-window="contact" data-view="design-with" aria-label="Design With"></button><span class="toggle-label">Design With</span></div>
+      <div class="toggle-item"><button class="toggle brand-sky" data-window="contact" data-view="dream-with" aria-label="Dream With"></button><span class="toggle-label">Dream With</span></div>
+    </div>
+
+    <div class="window" data-window="about">
+      <div class="view who-view" data-view="who">
+        <div class="circle-figure"><img src="images/about/headshot.jpg" alt="Chris headshot" onload="this.style.display='block'; this.nextElementSibling.style.display='none'; this.parentElement.classList.add('has-img');"><span>HeadShot Image</span></div>
+        <div class="who-text">
+          <p>Christopher Armstrong is the founding principal of Armstrong Development Group.</p>
+          <p>He started in architecture, spending several years at firms in New York and North Carolina working on private residences, restaurants, commercial interiors, and adaptive reuse projects. That work taught him how buildings actually come together, and it taught him that most of the decisions that determine whether a project serves the people who live in it get made long before anyone picks up a pencil.</p>
+          <p>So he moved upstream, into development.</p>
+          <p>Up until starting ADG, Christopher has been leading affordable housing development for a nonprofit in New York City, managing over half a million square feet and nearly half a billion dollars in financing supporting 970 units. He has taken sites through acquisition, carried projects to permanent financing, and repositioned aging assets, working closely with public agencies, lenders, and the communities these buildings serve.</p>
+          <p>He founded ADG in 2026 because he kept seeing the same gap. Developers hand design to someone else. Architects hand the deal to someone else. The result is housing that works on a spreadsheet or works on paper, but rarely both.</p>
+          <p>Christopher holds two master's degrees from Columbia University GSAPP, in architecture and in real estate development, and a Bachelor of Arts in Architecture from the University of North Carolina at Charlotte.</p>
+          <p>Outside the work, he's an avid runner and never turns down a project he can do with his hands, currently a 1970's steel bicycle.</p>
+        </div>
+      </div>
+      <div class="view what-view" data-view="what">
+        <div class="pillar">
+          <div class="circle-figure"><img src="images/about/develop.jpg" alt="Develop" onload="this.style.display='block'; this.nextElementSibling.style.display='none'; this.parentElement.classList.add('has-img');"><span>Development Overview Image</span></div>
+          <div class="pillar-text"><h3>Develop</h3><p>We take projects from a site and an idea to a finished building people live in. That means finding the opportunity, running the numbers, assembling the capital, and staying with it through construction and lease-up. The work is built on affordable housing experience in one of the hardest markets in the country, where closing a deal means layering public and private money and keeping every party moving together.</p></div>
+        </div>
+        <div class="pillar">
+          <div class="circle-figure"><img src="images/about/design.jpg" alt="Design" onload="this.style.display='block'; this.nextElementSibling.style.display='none'; this.parentElement.classList.add('has-img');"><span>Design Overview Image</span></div>
+          <div class="pillar-text"><h3>Design</h3><p>Design is in the work from the start, not bolted on afterward. We ask how a space will be used and how it will feel to be in it while the fundamentals are still being decided. That means better decisions earlier and work that holds up. We design all kinds of things, from buildings to interiors to objects.</p></div>
+        </div>
+        <div class="pillar">
+          <div class="circle-figure"><img src="images/about/dream.jpg" alt="Dream" onload="this.style.display='block'; this.nextElementSibling.style.display='none'; this.parentElement.classList.add('has-img');"><span>Dream Overview Image</span></div>
+          <div class="pillar-text"><h3>Dream</h3><p>Not every idea starts as a deal. Dream is where we work out the ones that are not ready yet, the concepts, the what-ifs, the projects we want to exist before anyone has figured out how to pay for them. Some become real. Some stay on the page and make the next one better. All of it keeps the work pointed at what should get built, not just what can.</p></div>
+        </div>
+      </div>
+      <div class="view www-view" data-view="www">
+        <div class="www-row">
+          <div class="circle-figure"><img src="images/about/map.jpg" alt="Map" onload="this.style.display='block'; this.nextElementSibling.style.display='none'; this.parentElement.classList.add('has-img');"><span>Map</span></div>
+          <div class="www-text">
+            <section>
+              <h3>Where We Practice</h3>
+              <p>ADG works in New York and the Carolinas.</p>
+              <p>New York City is where the firm's development experience was built, across ground-up construction, preservation, and adaptive reuse, and through the layered public financing that makes affordable housing possible in one of the most complex markets in the country. That remains home base.</p>
+              <p>North and South Carolina are where the firm is growing. With roots in the region and a market adding people faster than it is adding housing, the Carolinas offer the chance to apply what New York taught us somewhere the need is just as real and the runway is longer. ADG's first Carolina project, a rehabilitation, is currently in predevelopment.</p>
+              <p>We are actively pursuing opportunities across all three markets.</p>
+            </section>
+            <section>
+              <h3>Why We Practice</h3>
+              <p>ADG was founded in 2026 because of a gap that kept showing up. Developers hand design to someone else. Architects hand the deal to someone else. The result is housing that works on a spreadsheet or works on paper, but rarely both.</p>
+              <p>The purpose is to build what matters and design for all. That means development and design under one roof, with the financial discipline to make a project real and the design judgment to make it worth living in.</p>
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="window" data-window="projects">
+      <div class="view project-list" data-view="development">
+        <div class="project-row placeholder">Coming Soon</div>
+      </div>
+      <div class="view project-list" data-view="design">
+        <button class="project-row" type="button" data-images="projects/design/scarsdale-house-renovation" data-collab="Kimoy Studios" data-type="Residential" data-desc="A full gut renovation of an existing house built in the 1980s. The project features a complete layout update in addition to bringing the house up to date with new finishes and design features.">Scarsdale House Renovation</button>
+        <button class="project-row" type="button" data-images="projects/design/sea-restaurant" data-collab="Kimoy Studios" data-type="Commercial" data-desc="An adaptive reuse project that transforms a former handbag store into a vibrant restaurant, capturing elements of Southeast Asia.">SEA Restaurant</button>
+        <button class="project-row" type="button" data-images="projects/design/adg-website" data-count="3" data-fit="contain" data-type="Web Design" data-desc="A one page website that highlights the company and its projects.">ADG Website</button>
+        <button class="project-row" type="button" data-images="projects/design/various-design-work" data-desc="Various projects that highlight other things ADG has designed over the years.">Various Design Work</button>
+      </div>
+      <div class="view project-list" data-view="dreams">
+        <button class="project-row" type="button" data-images="projects/dreams/FlatIron/flatiron-deal-book-pages" data-type="Case Study" data-count="27" data-fit="contain" data-desc="A case study proposing a redevelopment of the Flatiron Building. Responding to New York's rising office vacancy and growing housing demand, the proposal converts the building from office to residential, built around adaptable, space-saving studios for Gen Z renters and young professionals.">Flatiron Redevelopment</button>
+        <button class="project-row" type="button" data-images="projects/dreams/cocoa-butter" data-collab="Kiaron Aiken" data-type="Speculative" data-count="6" data-desc="Existing between principles of living and infrastructure, Cocoa Butter, a name given for more than just cultural homage, looks to provide the same qualities as its namesake. Cocoa Butter aims to heal a community historically plagued with scars left behind by the urban design of Robert Moses, and the overwhelming car culture of the Bronx. By connecting East Harlem to Mott Haven, this living bridge is not only an urban stitch that empowers pedestrians and NYC bike/ATV culture, but also a destination for the surrounding Black and Hispanic communities. The project provides a pedestrian bridge that links bike and foot traffic across the Harlem river and provides an urban garage space for formal and informal gatherings, markets, and bike repair. Above this bridge is a modest timber construction for housing that responds to the intergenerational aspect of the community the project serves. By providing a negotiable space for a community with shifting needs, Cocoa Butter aims to connect, conceal, and heal using an agency, transformability, and sharing.">Cocoa Butter</button>
+        <button class="project-row" type="button" data-images="projects/dreams/godega" data-type="Architectural Intervention" data-fit="contain" data-desc="Godega is an urban intervention that borders between the world of architecture and supply chain management to respond to socioeconomic issues surrounding food insecurity and food sovereignty. This semi autonomous vehicle creates a link between whole food suppliers and neighborhoods directly cutting out the typical distribution system. In other words, this project looks to put healthy meals on people’s plates without creating a financial burden or time-consuming trips to find cheaper or quality foods.">Godega</button>
+        <button class="project-row" type="button" data-images="projects/dreams/more-death-more-life" data-type="Speculative" data-count="11" data-desc="Wood waste often exists longer as waste compared to its product state or even original form. This material, once a vital part of nature, is discarded, deemed unusable, and left in landfills. More Life, More Death looks to re-image the way we harvest and use wood to create a more circular system. By first, utilizing outputs as inputs, the project looks to reuse products by scaling them down after initial use, to gain a greater return on harvested trees. The project then looks to localize extraction by taking advantage of a shift in burial traditions by memorializing the dead with trees. This will create a deeper attachment between us and our trees and forest leading to a better relationship and a new system of value for our wood overall.&#10;&#10;The project becomes architecture at the Red Hook Grain Terminal by providing a place for harvested trees and reclaimed lumber to be milled, dried, and stored while providing a public space for commemorating the trees that once stood as memorials in cemeteries. In addition, the structure acts as an elevated public space for a community whose existing park is plagued by toxic waste and is projected to flood by 2063.">More Death, More Life</button>
+        <button class="project-row" type="button" data-images="projects/dreams/building-the-engine" data-collab="Kiaron Aiken &amp; Allon Morgan" data-type="Speculative" data-count="1" data-desc="A speculative project focused on development and design in Nairobi, Kenya. It takes advantage of the value chain to build sustainable and profitable housing from materials that are native to the country as well as some that are more unorthodox, such as plastic waste.">Building the Engine</button>
+      </div>
+    </div>
+
+    <div class="window" data-window="contact">
+      <div class="view contact-view" data-view="partner">
+        <h3>Develop With</h3>
+        <p>Have a project or site? Let's chat.</p>
+        <a class="contact-email" href="mailto:Carmstrong@withADG.com">Carmstrong@withADG.com</a>
+      </div>
+      <div class="view simple-view" data-view="design-with"><h3>Design With</h3><p>Content coming soon.</p></div>
+      <div class="view simple-view" data-view="dream-with"><h3>Dream With</h3><p>Content coming soon.</p></div>
+    </div>
+
+  </div>
+</div>
+
+<div class="modal-backdrop" id="projectModal">
+  <div class="modal-box">
+    <button class="modal-close" id="modalClose" type="button" aria-label="Close">×</button>
+    <div class="modal-stage">
+      <button class="carousel-arrow carousel-prev" id="carouselPrev" type="button" aria-label="Previous image">‹</button>
+      <div class="slide-placeholder" id="slidePlaceholder">
+        <span class="slide-label">Image</span>
+        <span class="slide-count" id="slideCount">1 / 3</span>
+      </div>
+      <img class="slide-img" id="slideImg" alt="Project photo">
+      <button class="carousel-arrow carousel-next" id="carouselNext" type="button" aria-label="Next image">›</button>
+
+      <div class="floating-info" id="floatingInfo" tabindex="0">
+        <h3 id="modalProjectName">Project Name</h3>
+        <div class="project-meta" id="modalProjectMeta"></div>
+        <p id="modalProjectDesc">Project description.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const endIntro = () => document.querySelectorAll('.wordmark, .bg-skyline').forEach(el => el.classList.remove('intro'));
+  setTimeout(endIntro, 2000);
+  document.addEventListener('click', endIntro, { once: true });
+  const bodyRow = document.getElementById('bodyRow');
+  const tabs = document.querySelectorAll('.tab');
+  const toggleCols = document.querySelectorAll('.toggle-col');
+  const windows = document.querySelectorAll('.window');
+  const toggles = document.querySelectorAll('.toggle');
+
+  function closeEverything(){
+    tabs.forEach(t => { t.classList.remove('active'); t.setAttribute('aria-expanded','false'); });
+    toggleCols.forEach(c => { c.classList.remove('show'); c.querySelectorAll('.toggle-item').forEach(item => item.classList.remove('active')); });
+    windows.forEach(w => { w.classList.remove('show'); });
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    toggles.forEach(tg => tg.classList.remove('active'));
+    bodyRow.classList.remove('expanded','open-about','open-projects','open-contact');
+  }
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const isActive = tab.classList.contains('active');
+      const target = tab.dataset.target;
+      closeEverything();
+      if(!isActive){
+        tab.classList.add('active');
+        tab.setAttribute('aria-expanded','true');
+        document.querySelector('.toggle-col[data-for="'+target+'"]').classList.add('show');
+        bodyRow.classList.add('expanded', 'open-'+target);
+        // window + view stay hidden until a box is clicked
+      }
+    });
+  });
+
+  toggles.forEach(tg => {
+    tg.addEventListener('click', () => {
+      const winName = tg.dataset.window;
+      const viewName = tg.dataset.view;
+
+      document.querySelectorAll('.toggle[data-window="'+winName+'"]').forEach(t => t.classList.remove('active'));
+      tg.classList.add('active');
+
+      const col = document.querySelector('.toggle-col[data-for="'+winName+'"]');
+      col.querySelectorAll('.toggle-item').forEach(item => item.classList.remove('active'));
+      tg.closest('.toggle-item').classList.add('active');
+
+      const win = document.querySelector('.window[data-window="'+winName+'"]');
+      windows.forEach(w => w.classList.remove('show'));
+      win.classList.add('show');
+
+      win.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.dataset.view === viewName));
+    });
+  });
+
+  document.getElementById('logoBtn').addEventListener('click', (e) => {
+    e.preventDefault();
+    closeEverything();
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+
+  // ---------- Project modal: carousel + floating info card ----------
+  const projectModal = document.getElementById('projectModal');
+  const modalName = document.getElementById('modalProjectName');
+  const modalDesc = document.getElementById('modalProjectDesc');
+  const modalMeta = document.getElementById('modalProjectMeta');
+  const floatingInfo = document.getElementById('floatingInfo');
+  const slideCount = document.getElementById('slideCount');
+  const slideImg = document.getElementById('slideImg');
+  const slidePlaceholder = document.getElementById('slidePlaceholder');
+  const modalStage = document.querySelector('.modal-stage');
+  let totalSlides = 3;
+  let currentSlide = 0;
+  let currentImageFolder = '';
+  let currentFit = 'cover';
+
+  function updateSlide(){
+    slideCount.textContent = (currentSlide + 1) + ' / ' + totalSlides;
+    slideImg.style.display = 'none';
+    slidePlaceholder.style.display = 'flex';
+    modalStage.classList.remove('has-img');
+    if(currentImageFolder){
+      const n = String(currentSlide + 1).padStart(2, '0');
+      slideImg.style.objectFit = currentFit;
+      slideImg.onload = () => {
+        slideImg.style.display = 'block';
+        slidePlaceholder.style.display = 'none';
+        modalStage.classList.add('has-img');
+      };
+      slideImg.onerror = () => {
+        // fall back to unpadded naming (1.jpg) before giving up
+        if(!slideImg.dataset.retried){
+          slideImg.dataset.retried = '1';
+          slideImg.src = 'images/' + currentImageFolder + '/' + (currentSlide + 1) + '.jpg';
+          return;
+        }
+        slideImg.style.display = 'none';
+        slidePlaceholder.style.display = 'flex';
+        modalStage.classList.remove('has-img');
+      };
+      delete slideImg.dataset.retried;
+      slideImg.src = 'images/' + currentImageFolder + '/' + n + '.jpg';
+    } else {
+      slideImg.removeAttribute('src');
+    }
+  }
+
+  function openProjectModal(name, desc, imagesFolder, count, fit, meta){
+    modalName.textContent = name;
+    modalMeta.textContent = meta || '';
+    modalDesc.textContent = desc;
+    currentImageFolder = imagesFolder || '';
+    totalSlides = Math.max(1, parseInt(count, 10) || 3);
+    currentFit = fit || 'cover';
+    currentSlide = 0;
+    updateSlide();
+    floatingInfo.classList.remove('revealed');
+    projectModal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeProjectModal(){
+    projectModal.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  document.querySelectorAll('button.project-row').forEach(btn => {
+    btn.addEventListener('click', () => openProjectModal(
+      btn.textContent.trim(), btn.dataset.desc || '', btn.dataset.images || '',
+      btn.dataset.count, btn.dataset.fit,
+      [btn.dataset.type && 'Type: ' + btn.dataset.type,
+       btn.dataset.collab && 'Collaborator: ' + btn.dataset.collab].filter(Boolean).join('\n')));
+  });
+
+  document.getElementById('modalClose').addEventListener('click', closeProjectModal);
+  projectModal.addEventListener('click', (e) => { if(e.target === projectModal) closeProjectModal(); });
+  document.addEventListener('keydown', (e) => { if(e.key === 'Escape' && projectModal.classList.contains('open')) closeProjectModal(); });
+
+  document.getElementById('carouselPrev').addEventListener('click', () => {
+    currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+    updateSlide();
+  });
+  document.getElementById('carouselNext').addEventListener('click', () => {
+    currentSlide = (currentSlide + 1) % totalSlides;
+    updateSlide();
+  });
+
+  // tap-to-reveal fallback for touch devices (no hover)
+  floatingInfo.addEventListener('click', () => floatingInfo.classList.toggle('revealed'));
+</script>
+
+</body>
+</html>
